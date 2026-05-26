@@ -1,0 +1,22 @@
+{
+  "name": "sprtz",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "start": "node src/index.js"
+  },
+  "devDependencies": {},
+  "main": "src/index.js",
+  "dependencies": {
+    "esbuild": "^0.21.5",
+    "express": "^5.2.1",
+    "nanoid": "^3.3.12",
+    "picocolors": "^1.1.1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "types": "module"
+}
