@@ -16,7 +16,7 @@ matchRouter.get('/', async(req, res) => {
     if (!parsed.success) {
         return res.status(400).json({
             error: "Invalid query",
-            details: JSON.stringify(parsed),
+            details: parsed.error.issues,
         });
     }
 
@@ -42,15 +42,14 @@ matchRouter.get('/', async(req, res) => {
 matchRouter.post('/', async(req, res) => {
 
     const parsedBody = createMatchSchema.safeParse(req.body);
-    const {data: {startTime, endTime, homeScore, awayScore}} = parsedBody;
-
-
     if(!parsedBody.success) {
         return res.status(400).json({
             message: 'Missing body',
-            details:  JSON.stringify(parsedBody.error)
+            details:  parsedBody.error.issues
         });
     }
+
+    const {data: {startTime, endTime, homeScore, awayScore}} = parsedBody;
 
     try{
 
@@ -63,6 +62,10 @@ matchRouter.post('/', async(req, res) => {
             status: getMatchStatus(startTime, endTime)
         }).returning();
 
+        if(res.app.locals.broadCastMatchCreated){
+            res.app.locals.broadCastMatchCreated(event);
+        }
+
         res.status(201).json({
             data: event
         })
@@ -70,7 +73,7 @@ matchRouter.post('/', async(req, res) => {
     } catch(e){
         return res.status(500).json({
             error: 'Failed to create match',
-            details:  JSON.stringify(e)
+            details:  e.message
         });
     }
 })
