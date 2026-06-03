@@ -7,9 +7,7 @@
     "dev": "node --watch src/index.js",
     "start": "node src/index.js",
     "db:generate": "drizzle-kit generate --config=drizzle.config.js",
-    "db:migrate": "drizzle-kit migrate --config=drizzle.config.js",
-    "start": "node src/index.js"
-
+    "db:migrate": "drizzle-kit migrate --config=drizzle.config.js"
   },
   "main": "src/index.js",
   "dependencies": {
@@ -19,7 +17,8 @@
     "express": "^5.2.1",
     "nanoid": "^3.3.12",
     "pg": "^8.21.0",
-    "picocolors": "^1.1.1"
+    "picocolors": "^1.1.1",
+    "zod": "^4.4.3"
   },
   "keywords": [],
   "author": "",
