@@ -7,8 +7,7 @@ import {desc} from "drizzle-orm";
 
 export const matchRouter = express.Router();
 
-matchRouter.get('/', async(req, res) => {
-
+matchRouter.get('/', async (req, res) => {
     const MAX_LIMIT = 100;
 
     const parsed = listMatchesQuerySchema.safeParse(req.query);
@@ -19,25 +18,28 @@ matchRouter.get('/', async(req, res) => {
             details: parsed.error.issues,
         });
     }
-
     const limit = Math.min(parsed.data.limit ?? 50, MAX_LIMIT);
+    try {
+        const data = await db
+        .select()
+         .from(matches)
+         .orderBy(desc(matches.createdAt))
+         .limit(limit);
 
-        try{
-            const data = await db.select().from(matches).orderBy((desc(matches.createdAt))).limit(limit);
+        return res.status(200).json({
+            data,
+        });
+    } catch (e) {
 
-            return res.status(200).json({
-                data: data
-            })
-        } catch(e){
-            res.status(500).json({
-                message: 'Failed to list the matches'
-            })
+        console.error("GET /matches error:", e);
+        if (res.headersSent) {
+            return;
         }
-    res.status(200).json({
-        message: 'matches List',
-    })
+        return res.status(500).json({
+            message: "Failed to list the matches",
+        });
     }
-);
+});
 
 matchRouter.post('/', async(req, res) => {
 
@@ -52,7 +54,6 @@ matchRouter.post('/', async(req, res) => {
     const {data: {startTime, endTime, homeScore, awayScore}} = parsedBody;
 
     try{
-
         const [event] = await db.insert(matches).values({
             ...parsedBody.data,
             startTime: new Date(startTime),
@@ -66,7 +67,7 @@ matchRouter.post('/', async(req, res) => {
             res.app.locals.broadCastMatchCreated(event);
         }
 
-        res.status(201).json({
+     return res.status(201).json({
             data: event
         })
 
